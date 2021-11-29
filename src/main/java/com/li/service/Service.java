@@ -19,40 +19,48 @@ public class Service {
     WebClient webClient;
     Properties p;
     HtmlPage home = null;
+    int startTime;
+    int endTime;
 
     public Service() {
         webClient = new MainWebClient().getWebClient();
         p = Config.getProperties();
+        String time = Config.getProperties().getProperty("time");
+        String[] times = time.split("-");
+        startTime = Integer.parseInt(times[0]);
+        endTime = Integer.parseInt(times[1]);
     }
 
     public void work() {
-        System.out.println("服务启动成功，将于设定时间自动打卡");
+        System.out.println(getTimes() + " 服务启动成功，将于设定时间自动打卡");
         while (true) {
             int now = Integer.parseInt(getTime());
-            String time = Config.getProperties().getProperty("time");
-            String[] times = time.split("-");
-            int startTime = Integer.parseInt(times[0]);
-            int endTime = Integer.parseInt(times[1]);
             if (now >= startTime && now < endTime) {
-                for (int i = 0; i < 10; i++) {
-                    submit();
-                    if (confirm()) {
-                        Mail.sendMail(p.getProperty("mail"), "自动打卡信息", getTimes()+" 打卡成功");
-                        System.out.println(getTimes()+" 打卡成功");
+                if (confirm()) {
+                    System.out.println("今日已打卡");
+                } else {
+                    for (int i = 0; i < 10; i++) {
                         try {
-                            TimeUnit.HOURS.sleep(15);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            submit();
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.println("cookie失效");
+                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 失败，cookie异常");
+                            break;
                         }
-                        break;
-                    }
-                    if (i == 9) {
-                        Mail.sendMail(p.getProperty("mail"), "自动打卡信息", getTimes()+" 打卡失败，请手动打卡并检查此服务");
-                        System.out.println(getTimes()+" 打卡失败，请手动打卡并检查此服务");
+                        if (confirm()) {
+                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 打卡成功");
+                            System.out.println(getTimes() + " 打卡成功");
+                            break;
+                        }
+                        if (i == 9) {
+                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 失败，请手动打卡并检查此服务");
+                            System.out.println(getTimes() + " 失败，请手动打卡并检查此服务");
+                        }
                     }
                 }
             }
             try {
+                confirm();
                 TimeUnit.HOURS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -61,12 +69,12 @@ public class Service {
     }
 
     public void submit() {
-        assert home != null;
         try {
             home = webClient.getPage(p.getProperty("url"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        assert home != null;
         List<HtmlTextInput> location = home.getByXPath("/html/body/div/div/div[3]/div/div[2]/div/div/div/div[1]/form/div[1]/div/input");
         location.get(0).setText(p.getProperty("location"));
 
@@ -192,15 +200,14 @@ public class Service {
     public boolean confirm() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String date = df.format(new Date());
+        HtmlPage page = null;
         try {
-            home = webClient.getPage(p.getProperty("url") + "?op=getlist");
+            page = webClient.getPage(p.getProperty("url") + "?op=getlist");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (home.asXml().contains(date)) {
-            return true;
-        }
-        return false;
+        assert page != null;
+        return page.asXml().contains(date);
     }
 
     public String getTime() {

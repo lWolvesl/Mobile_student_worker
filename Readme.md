@@ -8,7 +8,7 @@
     >
     >   可自定义邮件
 
-## 使用教程
+## 使用教程-源码编码启动
 
 ### 一、修改 resources 包下的 config.properties
 
@@ -155,3 +155,12 @@ parentPhone=xxx
 -   检查cookie是否过期，若过期就及时更换
 
 ![截屏2021-11-28 21.41.45](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-11-28%2021.41.45.png)
+
+## 使用教程Release-jar包模式
+
+-   下载好release的jar包后
+-   使用360等压缩工具打开
+-   ![截屏2021-11-29 14.28.16](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-11-29%2014.28.16.png)
+-   ![截屏2021-11-29 14.28.46](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-11-29%2014.28.46.png)
+-   直接修改config.properties文件
+-   压缩成功后可以直接启动（跳转源码方式-部署）
