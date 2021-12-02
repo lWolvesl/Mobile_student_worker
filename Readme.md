@@ -17,16 +17,17 @@
 host=htu.banjimofang.com
 
 #个人cookiee
-name=yxktmf
-cookiee=xxx
+name=xxx
+cookie=xxx
+
 
 #打卡时间（单位为小时,程序会在此期间打卡,24小时制）
 time=11-13
 
-#接收打卡信息的邮箱
+#接收打卡信息的邮箱(可以不填写，无影响）
 mail=xxx
 
-#发送打卡信息的邮箱
+#发送打卡信息的邮箱(可以不填写，无影响）
 #此处163邮箱为smtp.163.com,QQ邮箱为smtp.qq.com
 mail.host=smtp.163.com
 mailServer=xxx
@@ -34,7 +35,7 @@ mail.smtp.auth=true
 passwd=xxx
 
 #个人打卡页面地址
-url=xxx
+url=http://htu.banjimofang.com/student/course/31030/profiles/6099
 
 #位置信息，可以自行复制定位再修改
 location=河南省,新乡市,牧野区,求知路河南师范大学(东区)|35.32802,113.92183
@@ -109,10 +110,10 @@ parentPhone=xxx
         -   顶栏的地址即为个人打卡页面地址（url）
         -   点击不安全
         -   ![截屏2021-11-28 21.26.01](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-11-28%2021.26.01.png)
-        -   再点击Cookie
-        -   ![截屏2021-11-28 21.26.37](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-11-28%2021.26.37.png)
-        -   本软件使用的cookie为yxktmf
-        -   名称即为cookie的name，内容为cookiee，依次填入
+        -   再点击Cookie，如果显示只有一个，刷新页面即可
+        -   ![截屏2021-12-02 19.49.38](https://typroa-wolves.oss-cn-hangzhou.aliyuncs.com/img-li/%E6%88%AA%E5%B1%8F2021-12-02%2019.49.38.png)
+        -   本软件使用的cookie为remeber_student开头的
+        -   将**名称**和**内容**填入name和cookie即可
     -   邮箱
         -   发送打卡的邮箱需要开启 IMAP/SMTP 和 POP3/SMTP服务
         -   此处以163邮箱演示,进入上边栏的设置即可看到，注意：开启IMAP后的授权码只会出现一次

@@ -21,6 +21,7 @@ public class Service {
     HtmlPage home = null;
     int startTime;
     int endTime;
+    int sleep;
 
     public Service() {
         webClient = new MainWebClient().getWebClient();
@@ -29,6 +30,8 @@ public class Service {
         String[] times = time.split("-");
         startTime = Integer.parseInt(times[0]);
         endTime = Integer.parseInt(times[1]);
+        sleep = 24 - (endTime - startTime) - 2;
+
     }
 
     public void work() {
@@ -40,28 +43,27 @@ public class Service {
                     System.out.println("今日已打卡");
                 } else {
                     for (int i = 0; i < 10; i++) {
-                        try {
-                            submit();
-                        } catch (IndexOutOfBoundsException e) {
-                            System.out.println("cookie失效");
-                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 失败，cookie异常");
-                            break;
-                        }
+                        submit();
                         if (confirm()) {
-                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 打卡成功");
                             System.out.println(getTimes() + " 打卡成功");
+                            Mail.sendMail(p.getProperty("mail"), "Punch in information", getTimes() + " Success");
+                            try {
+                                TimeUnit.HOURS.sleep(sleep);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         }
                         if (i == 9) {
-                            Mail.sendMail(p.getProperty("mail"), "打卡信息", getTimes() + " 失败，请手动打卡并检查此服务");
-                            System.out.println(getTimes() + " 失败，请手动打卡并检查此服务");
+                            System.out.println(getTimes() + " 打卡失败，请手动打卡并检查此服务");
+                            Mail.sendMail(p.getProperty("mail"), "Punch in information", getTimes() + " fail");
                         }
                     }
                 }
             }
+            int polling = now - startTime > 1 ? 60 : 30;
             try {
-                confirm();
-                TimeUnit.HOURS.sleep(1);
+                TimeUnit.MINUTES.sleep(polling);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -207,7 +209,13 @@ public class Service {
             e.printStackTrace();
         }
         assert page != null;
-        return page.asXml().contains(date);
+        String s = page.asXml();
+        if (s.contains("登陆: 身份验证")) {
+            System.out.println("服务器验证失败");
+            Mail.sendMail(p.getProperty("mail"), "Punch in information", getTimes() + "Cookie异常，系统已退出");
+            System.exit(0);
+        }
+        return s.contains(date);
     }
 
     public String getTime() {

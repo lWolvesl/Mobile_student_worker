@@ -39,6 +39,7 @@ public class Mail {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
+            System.out.println("邮箱发送出错");
         }
     }
 }
